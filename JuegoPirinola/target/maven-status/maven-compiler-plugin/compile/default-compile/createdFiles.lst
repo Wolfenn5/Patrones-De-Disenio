@@ -1,0 +1,7 @@
+modelo/Cara.class
+modelo/Pirinola.class
+abstractas/JuegoMng.class
+modelo/JugadorH.class
+abstractas/Jugador.class
+modelo/Mesa.class
+prueba/TestPirinola.class
