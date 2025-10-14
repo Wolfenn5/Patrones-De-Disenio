@@ -4,91 +4,169 @@ import abstractas.JuegoMng;
 import modelo.*;
 import java.util.ArrayList;
 
-public class TestPirinola extends JuegoMng {
+
+
+
+/**
+ * Clase principal (que contiene el main) que ejecuta el juego de la pirinola.
+ * Extiende JuegoMng y se hacen las implementaciones concretas
+ */
+public class TestPirinola extends JuegoMng 
+{
     
-    public TestPirinola(ArrayList<JugadorH> jugadores, Mesa mesa, Pirinola pirinola) {
+    
+    
+    /**
+     * Constructor que inicia el juego completo.
+     * @param jugadores lista de jugadores
+     * @param mesa mesa del juego
+     * @param pirinola pirinola con sus caras
+     */
+    public TestPirinola(ArrayList<JugadorH> jugadores, Mesa mesa, Pirinola pirinola) 
+    {
         super(jugadores, mesa, pirinola);
     }
     
+    
+    /**
+     * Inicia el juego con un mensaje.
+     */
     @Override
-    public void jugar() {
-        System.out.println("=== INICIANDO JUEGO DE PIRINOLA ===");
+    public void jugar() 
+    {
+        System.out.println("---------------------INICIO JUEGO DE PIRINOLA---------------------");
         jugarPartida();
     }
     
+    
+    
+    /**
+     * Ejecuta una partida completa por rondas hasta que haya un ganador.
+     * Aparte de manejar la ronda, verifica el estado del juego.
+     * Se puso in cierto limite de rondas solo por comodiad al imprimir
+     */
     @Override
-    public void jugarPartida() {
-        int ronda = 1;
+    public void jugarPartida() 
+    {
+        int ronda= 1;
         
-        while (!hayGanador(jugadores)) {
-            System.out.println("\n--- Ronda " + ronda + " ---");
+        while (!hayGanador(jugadores)) 
+        {
+            System.out.println("\n\n--- Ronda " + ronda + " ---");
             estadoJugadores();
             
-            for (JugadorH jugador : jugadores) {
-                if (jugador.getEstado() && !hayGanador(jugadores)) {
+            
+            // Turno de jugadores
+            for (JugadorH jugador : jugadores) 
+            {
+                if (jugador.getEstado() && !hayGanador(jugadores)) 
+                {
                     turno(jugador);
-                    System.out.println("---");
+                    System.out.println("----------------");
                 }
             }
             ronda++;
             
+            
+            
             // Verificar si quedan jugadores activos
-            if (ronda > 12) { // nomas porque si
-                System.out.println("Límite de rondas alcanzado");
+            // Se puede comentar si no se quieren rondas especificas
+            if (ronda>12) 
+            { 
+                System.out.println("Límite de rondas, FIN");
                 break;
             }
         }
         
-        JugadorH ganador = ganador();
-        if (ganador != null) {
-            System.out.println("\n¡¡¡FELICIDADES!!!");
-            System.out.println("GANADOR: " + ganador.getNombre() + " con " + ganador.getBolsa() + " frijolitos");
-        } else {
-            System.out.println("\nEl juego terminó sin ganadores");
+        
+        
+        // Verificar si hay ganador
+        JugadorH ganador= ganador();
+        if (ganador != null) 
+        {
+            System.out.println("Gana el jugador: " + ganador.getNombre() + " quedo con " + ganador.getBolsa() + " frijoles");
+        } 
+        else 
+        {
+            System.out.println("\nNo hay ganador porque quedo mas de un jugador activo");
         }
     }
     
+    
+    
+    /**
+     * Hay un ganador cuando solo queda un jugador activo.
+     * @return el jugador ganador, o null si no hay exactamente un jugador activo
+     */
     @Override
-    public JugadorH ganador() {
-        JugadorH posibleGanador = null;
+    public JugadorH ganador() 
+    {
+        JugadorH posibleGanador= null;
         int jugadoresActivos = 0;
         
-        for (JugadorH jugador : jugadores) {
-            if (jugador.getEstado()) {
+        
+        // Contar los jugadores y ver si hay uno o mas activos
+        for (JugadorH jugador : jugadores) 
+        {
+            if (jugador.getEstado()) 
+            {
                 jugadoresActivos++;
                 posibleGanador = jugador;
             }
         }
-        
-        return jugadoresActivos == 1 ? posibleGanador : null;
+        return jugadoresActivos == 1 ? posibleGanador : null; // ternario si queda un solo jugador da true
     }
     
+    
+    
+    
+    /**
+     * Muestra la informacion  de cada jugador.
+     * Nombre
+     * Cantidad de frijoles
+     * Estado (activo/inactivo)
+     */
     @Override
-    public void estadoJugadores() {
+    public void estadoJugadores() 
+    {
         System.out.println("Estado de los jugadores:");
-        for (JugadorH jugador : jugadores) {
+        for (JugadorH jugador : jugadores) 
+        {
             System.out.println("  " + jugador.toString());
         }
     }
     
+    
     @Override
-    public boolean hayGanador(ArrayList<JugadorH> jugadores) {
+    public boolean hayGanador(ArrayList<JugadorH> jugadores) 
+    {
         int jugadoresActivos = 0;
         
-        for (JugadorH jugador : jugadores) {
-            if (jugador.getEstado()) {
+        
+        for (JugadorH jugador : jugadores) 
+        {
+            if (jugador.getEstado()) 
+            {
                 jugadoresActivos++;
             }
         }
         
-        // Verificación de los 3 estados:
-        // - Más de 1 jugador activo: juego continúa (false)
-        // - Exactamente 1 jugador activo: hay ganador (true)
-        // - 0 jugadores activos: juego termina sin ganador (true)
-        return jugadoresActivos <= 1;
+        // Verificacion de los 3 estados:
+        // Mas de 1 jugador activo: juego continúa (false)
+        // 1 jugador activo: hay ganador (true)
+        // Si ya no hay jugadores activos: juego termina sin ganador (true)
+        return jugadoresActivos<=1;
     }
     
-    public static void main(String[] args) {
+    
+    
+    
+    /**
+     * Método principal que inicia el juego de pirinola.
+     * @param args argumentos de linea de comandos (no se utilizan al momento de ejcutar)
+     */
+    public static void main(String[] args) 
+    {
         // Crear caras de la pirinola
         ArrayList<Cara> caras = new ArrayList<>();
         caras.add(new Cara("Pon uno"));
@@ -99,14 +177,14 @@ public class TestPirinola extends JuegoMng {
         caras.add(new Cara("Pierdes todo"));
         caras.add(new Cara("Todos ponen"));
         
-        // Crear componentes del juego
-        Pirinola pirinola = new Pirinola(caras);
-        Mesa mesa = new Mesa(10);
+        // Crear "componentes" del juego
+        Pirinola pirinola= new Pirinola(caras);
+        Mesa mesa= new Mesa(10); // 10 frijoles iniciales
         
         // Crear jugadores
-        ArrayList<JugadorH> jugadores = new ArrayList<>();
-        int numeroJugadores = 4;
-        int frijolesIniciales = 10; 
+        ArrayList<JugadorH> jugadores= new ArrayList<>();
+        int numeroJugadores= 4;
+        int frijolesIniciales= 10; 
     
         //jugadores.add(new JugadorH("Yo", 10));
         for (int i = 0; i < numeroJugadores; i++) 
@@ -116,7 +194,7 @@ public class TestPirinola extends JuegoMng {
         
         
         // Iniciar juego
-        TestPirinola juego = new TestPirinola(jugadores, mesa, pirinola);
+        TestPirinola juego= new TestPirinola(jugadores, mesa, pirinola);
         juego.jugar();
     }
 }
