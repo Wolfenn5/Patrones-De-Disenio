@@ -1,0 +1,92 @@
+@startuml SecuenciaMainTestPirinola
+
+actor "Usuario" as User
+participant "TestPirinola" as TestMain
+participant "ArrayList<Cara>" as CarasList
+participant "Cara" as Cara
+participant "Pirinola" as Pirinola
+participant "Mesa" as Mesa
+participant "ArrayList<JugadorH>" as JugadoresList
+participant "JugadorH" as Jugador
+participant "JuegoMng" as JuegoMng
+
+== Inicialización del Juego ==
+
+User -> TestMain: main(args)
+activate TestMain
+
+TestMain -> CarasList: new ArrayList<Cara>()
+activate CarasList
+TestMain -> Cara: new Cara("Pon uno")
+TestMain -> CarasList: add(cara)
+TestMain -> Cara: new Cara("Pon dos")
+TestMain -> CarasList: add(cara)
+TestMain -> Cara: new Cara("Toma uno")
+TestMain -> CarasList: add(cara)
+TestMain -> Cara: new Cara("Toma dos")
+TestMain -> CarasList: add(cara)
+TestMain -> Cara: new Cara("Toma todo")
+TestMain -> CarasList: add(cara)
+TestMain -> Cara: new Cara("Pierdes todo")
+TestMain -> CarasList: add(cara)
+TestMain -> Cara: new Cara("Todos ponen")
+TestMain -> CarasList: add(cara)
+deactivate CarasList
+
+TestMain -> Pirinola: new Pirinola(caras)
+activate Pirinola
+Pirinola --> TestMain: pirinola
+deactivate Pirinola
+
+TestMain -> Mesa: new Mesa(10)
+activate Mesa
+Mesa --> TestMain: mesa
+deactivate Mesa
+
+TestMain -> JugadoresList: new ArrayList<JugadorH>()
+activate JugadoresList
+
+loop 4 veces (i = 0 to 3)
+    TestMain -> Jugador: new JugadorH("Jugador " + (i+1), 10)
+    activate Jugador
+    Jugador --> TestMain: jugador
+    deactivate Jugador
+    TestMain -> JugadoresList: add(jugador)
+end
+deactivate JugadoresList
+
+TestMain -> TestMain: new TestPirinola(jugadores, mesa, pirinola)
+activate TestMain
+TestMain --> TestMain: juego
+deactivate TestMain
+
+== Ejecución del Juego ==
+
+TestMain -> JuegoMng: jugar()
+activate JuegoMng
+
+JuegoMng -> JuegoMng: jugarPartida()
+activate JuegoMng
+
+group Bucle Principal (hasta hayGanador() = true)
+    loop Para cada ronda
+        JuegoMng -> JuegoMng: estadoJugadores()
+        
+        loop Para cada jugador activo
+            JuegoMng -> JuegoMng: turno(jugador)
+        end
+        
+        JuegoMng -> JuegoMng: hayGanador(jugadores)
+    end
+end
+
+JuegoMng -> JuegoMng: ganador()
+JuegoMng -> System: println("Gana el jugador...")
+
+deactivate JuegoMng
+deactivate JuegoMng
+
+TestMain --> User: 
+deactivate TestMain
+
+@enduml

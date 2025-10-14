@@ -1,0 +1,129 @@
+@startuml DiagramaClasesPirinolaActualizado
+
+package abstractas {
+  abstract class Jugador {
+    # bolsa : int
+    # estado : boolean
+    --
+    + Jugador(bolsaInicial: int)
+    --
+    {abstract} + getBolsa() : int
+    {abstract} + getEstado() : boolean
+    {abstract} + ponUno() : int
+    {abstract} + ponDos() : int
+    {abstract} + ponTodo() : int
+    {abstract} + tomaUno(val: int) : void
+    {abstract} + tomaDos(val: int) : void
+    {abstract} + tomaTodo(val: int) : void
+  }
+  
+  abstract class JuegoMng {
+    # jugadores : ArrayList<JugadorH>
+    # mesa : Mesa
+    # pirinola : Pirinola
+    --
+    + JuegoMng(jugadores: ArrayList<JugadorH>, mesa: Mesa, pirinola: Pirinola)
+    + turno(jugador: JugadorH) : void
+    --
+    {abstract} + jugar() : void
+    {abstract} + jugarPartida() : void
+    {abstract} + ganador() : JugadorH
+    {abstract} + estadoJugadores() : void
+    {abstract} + hayGanador(jugadores: ArrayList<JugadorH>) : boolean
+  }
+}
+
+package modelo {
+  class Cara {
+    - nombre : String
+    --
+    + Cara(nombre: String)
+    + getNombre() : String
+    + toString() : String
+  }
+  
+  class Mesa {
+    - bolsa : int
+    --
+    + Mesa(bolsa: int)
+    + getBolsa() : int
+    + setBolsa(bolsa: int) : void
+    + ponUno(valor: int) : void
+    + ponDos(valor: int) : void
+    + ponTodo(valor: int) : void
+    + ponUno() : int
+    + ponDos() : int
+    + tomaTodo() : int
+    + getEstado() : boolean
+    + toString() : String
+  }
+  
+  class Pirinola {
+    - caras : ArrayList<Cara>
+    - random : Random
+    --
+    + Pirinola(caras: ArrayList<Cara>)
+    + girar() : Cara
+  }
+  
+  class JugadorH {
+    - nombre : String
+    --
+    + JugadorH(nombre: String, bolsa: int)
+    + getNombre() : String
+    + getBolsa() : int
+    + getEstado() : boolean
+    + ponUno() : int
+    + ponDos() : int
+    + ponTodo() : int
+    + tomaUno(val: int) : void
+    + tomaDos(val: int) : void
+    + tomaTodo(val: int) : void
+    + toString() : String
+  }
+}
+
+package prueba {
+  class TestPirinola {
+    --
+    + TestPirinola(jugadores: ArrayList<JugadorH>, mesa: Mesa, pirinola: Pirinola)
+    + jugar() : void
+    + jugarPartida() : void
+    + ganador() : JugadorH
+    + estadoJugadores() : void
+    + hayGanador(jugadores: ArrayList<JugadorH>) : boolean
+    + main(args: String[]) : void
+  }
+}
+
+' Relaciones de Herencia
+JugadorH --|> Jugador
+TestPirinola --|> JuegoMng
+
+' Relaciones de Composición/Agregación
+JuegoMng o--> "1" Mesa
+JuegoMng o--> "1" Pirinola
+JuegoMng o--> "*" JugadorH
+Pirinola *--> "*" Cara
+
+' Dependencias
+JuegoMng ..> Cara : usa en turno()
+TestPirinola ..> JugadorH : crea en main()
+
+note top of Mesa
+  Métodos sobrecargados:
+  - ponUno() : int
+  - ponUno(valor: int) : void
+  - ponDos() : int  
+  - ponDos(valor: int) : void
+end note
+
+note right of Jugador
+  Cambios en nombres:
+  - pierdesTodo() → ponTodo()
+  - tomsUno() → tomaUno()
+  - tomsDos() → tomaDos()
+  - tomsTodo() → tomaTodo()
+end note
+
+@enduml

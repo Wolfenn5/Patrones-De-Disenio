@@ -1,0 +1,122 @@
+@startuml SecuenciaTurnoJuegoMng
+
+actor "Sistema" as System
+participant "JuegoMng" as JuegoMng
+participant "JugadorH" as Jugador
+participant "Pirinola" as Pirinola
+participant "Cara" as Cara
+participant "Mesa" as Mesa
+
+
+
+System -> JuegoMng: turno(jugador)
+activate JuegoMng
+
+JuegoMng -> Jugador: getNombre()
+activate Jugador
+Jugador --> JuegoMng: nombre
+deactivate Jugador
+
+JuegoMng -> System: println(nombre)
+
+JuegoMng -> Pirinola: girar()
+activate Pirinola
+Pirinola --> JuegoMng: cara
+deactivate Pirinola
+
+JuegoMng -> Cara: getNombre()
+activate Cara
+Cara --> JuegoMng: nombreCara
+deactivate Cara
+
+JuegoMng -> System: println(nombreCara)
+
+
+
+
+    JuegoMng -> Jugador: ponUno()
+
+
+        Jugador --> JuegoMng: 1
+        JuegoMng -> Mesa: ponUno(1)
+
+        Jugador --> JuegoMng: 0
+        JuegoMng -> Mesa: ponUno(0)
+
+
+
+    JuegoMng -> Jugador: ponDos()
+
+
+        Jugador --> JuegoMng: 2
+        JuegoMng -> Mesa: ponDos(2)
+
+        Jugador --> JuegoMng: 0
+        JuegoMng -> Mesa: ponDos(0)
+
+    
+
+    JuegoMng -> Mesa: ponUno()
+
+        Mesa --> JuegoMng: 1
+        JuegoMng -> Jugador: tomaUno(1)
+
+        Mesa --> JuegoMng: 0
+        JuegoMng -> Jugador: tomaUno(0)
+
+
+    JuegoMng -> Mesa: ponDos()
+
+
+        Mesa --> JuegoMng: 2
+        JuegoMng -> Jugador: tomaDos(2)
+
+        Mesa --> JuegoMng: 0
+        JuegoMng -> Jugador: tomaDos(0)
+
+    
+
+    JuegoMng -> Mesa: tomaTodo()
+
+    Mesa --> JuegoMng: totalFrijolitos
+
+    JuegoMng -> Jugador: tomaTodo(totalFrijolitos)
+    
+
+    JuegoMng -> Jugador: ponTodo()
+
+    Jugador --> JuegoMng: totalPerdido
+
+    JuegoMng -> Mesa: ponTodo(totalPerdido)
+    
+
+
+        JuegoMng -> Jugador: ponUno()
+
+        Jugador --> JuegoMng: resultado
+
+
+    JuegoMng -> Mesa: ponTodo(totalRecolectado)
+
+
+
+
+JuegoMng -> Mesa: getEstado()
+
+Mesa --> JuegoMng: estadoMesa
+
+
+    JuegoMng -> System: println("La mesa no tiene frijoles, invocando 10 :)")
+    JuegoMng -> Mesa: setBolsa(10)
+
+    JuegoMng -> Mesa: getBolsa()
+
+    Mesa --> JuegoMng: cantidad
+
+    JuegoMng -> System: println("La mesa tiene X frijolitos")
+
+
+JuegoMng --> System: 
+
+
+@enduml
