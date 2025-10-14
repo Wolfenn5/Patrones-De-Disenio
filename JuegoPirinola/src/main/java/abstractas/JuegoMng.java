@@ -91,21 +91,23 @@ public abstract class JuegoMng
         {
             mesa.ponTodo(jugador.ponTodo());
         } 
-        else 
+        else if (c.getNombre().equals("Todos ponen"))
         {
-            int t = 0;
+            int t=0;
             for (JugadorH jdr : jugadores) 
             {
-                t += jdr.ponUno();
+                t= t+jdr.ponUno();
             }
             mesa.ponTodo(t);
         }
         
         // Revisar si la mesa tiene frijoles o no
-        if (mesa.getEstado() == false) {
+        if (mesa.getEstado() == false) 
+        {
             System.out.println("La mesa no tiene frijoles, invocando 10 :)");
             mesa.setBolsa(10);
-        } else {
+        } else 
+        {
             System.out.println("La mesa tiene " + mesa.getBolsa() + " frijolitos");
         }
     }
