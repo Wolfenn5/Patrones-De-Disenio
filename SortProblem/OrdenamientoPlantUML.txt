@@ -1,0 +1,48 @@
+@startuml
+interface EstrategiaOrdenamiento {
+    + ordenar(numeros : int[]) : void
+}
+class Burbuja implements EstrategiaOrdenamiento {
+    + ordenar(numeros : int[]) : void
+}
+class Insertion implements EstrategiaOrdenamiento {
+    + ordenar(numeros : int[]) : void
+}
+class Quick implements EstrategiaOrdenamiento {
+    + ordenar(numeros : int[]) : void
+}
+class Merge implements EstrategiaOrdenamiento {
+    + ordenar(numeros : int[]) : void
+}
+class ContextoOrdenamiento {
+    - estrategia : EstrategiaOrdenamiento
+    + setEstrategia(estrategia : EstrategiaOrdenamiento) : void
+    + ejecutarEstrategia(numeros: int[]) : void
+}
+class GraficaTiempos {
+    + mostrarHistograma(tiempos : Map<String, List<Long>>, tamanios : int[]) : void
+}
+class HistogramaTiempos {
+    - histograma : HistogramaTiempos
+    - tiempos : Map<String, List<Long>>
+    + getInstancia() : HistogramaTiempos
+    + agregarTiempo(algoritmo : String, tiempo : long) : void
+    + getTiempos() : Map<String, List<Long>>
+}
+class TestOrdenamiento {
+    + medirTiempo(contexto : ContextoOrdenamiento, numeros : int[])
+    + generarArreglo(tamanio : int, min : int, max : int)
+    + generarArregloInvertido(arrOrdenado : int[])
+    + main(args : String[]) : void
+}
+class ManejadorArchivos {
+    + escribirTiemposEnArchivo(nombreArchivo : String, n : int, tiempoBurbujaProm : long, tiempoBurbujaMejor : long, tiempoBurbujaPeor : long, tiempoQuickProm : long, tiempoQuickMejor : long, tiempoQuickPeor : long, tiempoInsertProm : long, tiempoInsertMejor : long, tiempoInsertPeor : long, tiempoMergeProm : long, tiempoMergeMejor : long, tiempoMergePeor : long) : void
+    + escribirEncabezado() : void
+}
+
+ContextoOrdenamiento o--> EstrategiaOrdenamiento
+TestOrdenamiento --> ContextoOrdenamiento
+TestOrdenamiento --> HistogramaTiempos
+TestOrdenamiento --> GraficaTiempos
+TestOrdenamiento --> ManejadorArchivos
+@enduml

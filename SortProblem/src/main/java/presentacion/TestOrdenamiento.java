@@ -2,6 +2,7 @@ package presentacion;
 
 import java.util.*;
 
+import datos.ManejadorArchivos;
 import negocio.Burbuja;
 import negocio.ContextoOrdenamiento;
 import negocio.HistogramaTiempos;
@@ -51,27 +52,19 @@ public class TestOrdenamiento {
 
     
     
-    
     /**
-     * Escribe los tiempos de ejecucion en un archivo separado por comas.
-     * @param nombreArchivo Ruta del archivo donde guardar los datos.
-     * @param n Tamaño del arreglo probado.
-     * @param tiempoBurbuja Tiempo del algoritmo Burbuja.
-     * @param tiempoQuick Tiempo del algoritmo Quick.
-     * @param tiempoInsert Tiempo del algoritmo Insertion.
-     * @param tiempoMerge Tiempo del algoritmo Merge.
+     * Genera un arreglo ordenado invertido para probar el peor caso posible.
+     * @param arrOrdenado Arreglo que ya esta ordenado.
+     * @return Un nuevo arreglo con sus elementos invertidos.
      */
-    public static void escribirTiemposEnArchivo(String nombreArchivo, int n, long tiempoBurbuja, long tiempoQuick,
-            long tiempoInsert, long tiempoMerge) {
-        try {
-            java.io.FileWriter fw = new java.io.FileWriter(nombreArchivo, true); // el true es para modo "append" (añadir al final)
-            fw.write(n + "," + tiempoBurbuja + "," + tiempoQuick + "," + tiempoInsert + "," + tiempoMerge + "\n");
-            fw.close();
-        } catch (Exception e) {
-            System.out.println("Error al escribir el archivo: " + e.getMessage());
+    public static int[] generarArregloInvertido(int[] arrOrdenado) {
+        int tamanio = arrOrdenado.length;
+        int[] invertido = new int[tamanio];
+        for (int i = 0; i < tamanio; i++) {
+            invertido[i] = arrOrdenado[tamanio-1-i];
         }
+        return invertido;
     }
-
     
     
     
@@ -83,51 +76,138 @@ public class TestOrdenamiento {
     public static void main(String[] args) {
         ContextoOrdenamiento contexto = new ContextoOrdenamiento();
         HistogramaTiempos histograma = HistogramaTiempos.getInstancia();
+        ManejadorArchivos.escribirEncabezado();
+       
 
-        try {
-            java.io.FileWriter fw = new java.io.FileWriter("src/main/java/datos/tiempos_algoritmos.txt");
-            fw.write("n,burbuja,quick,insertion,merge\n");
-            fw.close();
-        } catch (Exception e) {
-            System.out.println("Error al escribir el encabezado: " + e.getMessage());
-        }
+        for (int tam = 2; tam <= 1000; tam++) {            
+            /* Caso Promedio (Aleatorio) */
+            int[] numeros_prom = generarArreglo(tam, 0, 100);
 
-        for (int tam = 2; tam <= 1000; tam++) {
-            int[] numeros = generarArreglo(tam, 0, 100);
+            /* Mejor Caso (Ordenado) */
+            int[] numeros_mejor = Arrays.copyOf(numeros_prom, numeros_prom.length);
+            Arrays.sort(numeros_mejor);
 
+            /* Peor Caso (Invertido) */
+            int[] numeros_peor = generarArregloInvertido(numeros_mejor);
+            
+            
+            
             /* Burbuja */
             contexto.setEstrategia(new Burbuja());
-            int[] copiaBurbuja = Arrays.copyOf(numeros, numeros.length);
-            long tiempoBurbuja = medirTiempo(contexto, copiaBurbuja);
-            System.out.println("Burbuja (" + tam + "): " + Arrays.toString(copiaBurbuja));
-            System.out.println("Tiempo Burbuja: " + tiempoBurbuja + " ns");
-            histograma.agregarTiempo("Burbuja", tiempoBurbuja);
+          
+            /* Burbuja Promedio */
+            int[] copiaBurbujaProm = Arrays.copyOf(numeros_prom, numeros_prom.length);
+            long tiempoBurbujaProm = medirTiempo(contexto, copiaBurbujaProm);
+            System.out.println("Burbuja Caso Promedio (" + tam + "): " + Arrays.toString(copiaBurbujaProm));
+            System.out.println("Tiempo Burbuja Caso Promedio: " + tiempoBurbujaProm + " ns");
+            histograma.agregarTiempo("Burbuja (Promedio)", tiempoBurbujaProm);
+            
+            
+            /* Burbuja Mejor */
+            int[] copiaBurbujaMejor = Arrays.copyOf(numeros_mejor, numeros_mejor.length);
+            long tiempoBurbujaMejor = medirTiempo(contexto, copiaBurbujaMejor);
+            System.out.println("Burbuja Mejor Caso (" + tam + "): " + Arrays.toString(copiaBurbujaMejor));
+            System.out.println("Tiempo Burbuja Promedio: " + tiempoBurbujaMejor + " ns");
+            histograma.agregarTiempo("Burbuja (Mejor)", tiempoBurbujaMejor);
+            
+            
+            /* Burbuja Peor */
+            int[] copiaBurbujaPeor = Arrays.copyOf(numeros_peor, numeros_peor.length);
+            long tiempoBurbujaPeor = medirTiempo(contexto, copiaBurbujaPeor);
+            System.out.println("Burbuja Peor Caso (" + tam + "): " + Arrays.toString(copiaBurbujaPeor));
+            System.out.println("Tiempo Burbuja Peor Caso: " + tiempoBurbujaPeor + " ns");
+            histograma.agregarTiempo("Burbuja (Peor)", tiempoBurbujaPeor);
 
+            
+            
+            
+            
+            
             /* Quick */
             contexto.setEstrategia(new Quick());
-            int[] copiaQuick = Arrays.copyOf(numeros, numeros.length);
-            long tiempoQuick = medirTiempo(contexto, copiaQuick);
-            System.out.println("Quick (" + tam + "): " + Arrays.toString(copiaQuick));
-            System.out.println("Tiempo Quick: " + tiempoQuick + " ns");
-            histograma.agregarTiempo("Quick", tiempoQuick);
+            
+            /* Quick Promedio */
+            int[] copiaQuickProm = Arrays.copyOf(numeros_prom, numeros_prom.length);
+            long tiempoQuickProm = medirTiempo(contexto, copiaQuickProm);
+            System.out.println("Quick Caso Promedio (" + tam + "): " + Arrays.toString(copiaQuickProm));
+            System.out.println("Tiempo Quick Caso Promedio: " + tiempoQuickProm + " ns");
+            histograma.agregarTiempo("Quick (Promedio)", tiempoQuickProm);
+
+            
+            /* Quick Mejor */
+            int[] copiaQuickMejor = Arrays.copyOf(numeros_mejor, numeros_mejor.length);
+            long tiempoQuickMejor = medirTiempo(contexto, copiaQuickMejor);
+            System.out.println("Quick Mejor Caso (" + tam + "): " + Arrays.toString(copiaQuickMejor));
+            System.out.println("Tiempo Quick Mejor Caso: " + tiempoQuickMejor + " ns");
+            histograma.agregarTiempo("Quick (Mejor)", tiempoQuickMejor);            
+            
+            
+            /* Quick Peor */
+            int[] copiaQuickPeor = Arrays.copyOf(numeros_peor, numeros_peor.length);
+            long tiempoQuickPeor = medirTiempo(contexto, copiaQuickPeor);
+            System.out.println("Quick Peor Caso(" + tam + "): " + Arrays.toString(copiaQuickPeor));
+            System.out.println("Tiempo Quick Peor Caso: " + tiempoQuickPeor + " ns");
+            histograma.agregarTiempo("Quick(Peor)", tiempoQuickPeor);
+            
+
+
 
             /* Insertion */
             contexto.setEstrategia(new Insertion());
-            int[] copiaInsert = Arrays.copyOf(numeros, numeros.length);
-            long tiempoInsert = medirTiempo(contexto, copiaInsert);
-            System.out.println("Insert (" + tam + "): " + Arrays.toString(copiaInsert));
-            System.out.println("Tiempo Insert: " + tiempoInsert + " ns");
-            histograma.agregarTiempo("Insert", tiempoInsert);
 
+            /* Insertion Promedio*/
+            int[] copiaInsertProm = Arrays.copyOf(numeros_prom, numeros_prom.length);
+            long tiempoInsertProm = medirTiempo(contexto, copiaInsertProm);
+            System.out.println("Insert Caso Promedio (" + tam + "): " + Arrays.toString(copiaInsertProm));
+            System.out.println("Tiempo Insert Caso Promedio: " + tiempoInsertProm + " ns");
+            histograma.agregarTiempo("Insert (Promedio)", tiempoInsertProm);
+
+
+            /* Insertion Mejor*/
+            int[] copiaInsertMejor = Arrays.copyOf(numeros_mejor, numeros_mejor.length);
+            long tiempoInsertMejor = medirTiempo(contexto, copiaInsertMejor);
+            System.out.println("Insert Mejor Caso (" + tam + "): " + Arrays.toString(copiaInsertMejor));
+            System.out.println("Tiempo Insert Mejor Caso: " + tiempoInsertMejor + " ns");
+            histograma.agregarTiempo("Insert (Mejor)", tiempoInsertMejor);
+
+
+            /* Insertion Peor*/
+            int[] copiaInsertPeor = Arrays.copyOf(numeros_peor, numeros_peor.length);
+            long tiempoInsertPeor = medirTiempo(contexto, copiaInsertPeor);
+            System.out.println("Insert Peor Caso(" + tam + "): " + Arrays.toString(copiaInsertPeor));
+            System.out.println("Tiempo Insert Peor Caso: " + tiempoInsertPeor + " ns");
+            histograma.agregarTiempo("Insert (Peor)", tiempoInsertPeor);
+            
+            
+
+            
             /* Merge */
             contexto.setEstrategia(new Merge());
-            int[] copiaMerge = Arrays.copyOf(numeros, numeros.length);
-            long tiempoMerge = medirTiempo(contexto, copiaMerge);
-            System.out.println("Merge (" + tam + "): " + Arrays.toString(copiaMerge));
-            System.out.println("Tiempo Merge: " + tiempoMerge + " ns");
-            histograma.agregarTiempo("Merge", tiempoMerge);
 
-            escribirTiemposEnArchivo("src/main/java/datos/tiempos_algoritmos.txt", tam, tiempoBurbuja, tiempoQuick, tiempoInsert, tiempoMerge);
+            /* Merge Promedio*/
+            int[] copiaMergeProm = Arrays.copyOf(numeros_prom, numeros_prom.length);
+            long tiempoMergeProm = medirTiempo(contexto, copiaMergeProm);
+            System.out.println("Merge Caso Promedio (" + tam + "): " + Arrays.toString(copiaMergeProm));
+            System.out.println("Tiempo Merge Caso Promedio: " + tiempoMergeProm + " ns");
+            histograma.agregarTiempo("Merge (Promedio)", tiempoMergeProm);
+
+
+            /* Merge Mejor*/
+            int[] copiaMergeMejor = Arrays.copyOf(numeros_mejor, numeros_mejor.length);
+            long tiempoMergeMejor = medirTiempo(contexto, copiaMergeMejor);
+            System.out.println("Merge Mejor Caso (" + tam + "): " + Arrays.toString(copiaMergeMejor));
+            System.out.println("Tiempo Merge Mejor Caso: " + tiempoMergeMejor + " ns");
+            histograma.agregarTiempo("Merge (Mejor)", tiempoMergeMejor);
+
+
+            /* Merge Peor*/
+            int[] copiaMergePeor = Arrays.copyOf(numeros_peor, numeros_peor.length);
+            long tiempoMergePeor = medirTiempo(contexto, copiaMergePeor);
+            System.out.println("Merge Peor Caso (" + tam + "): " + Arrays.toString(copiaMergePeor));
+            System.out.println("Tiempo Merge Peor Caso: " + tiempoMergePeor + " ns");
+            histograma.agregarTiempo("Merge (Peor)", tiempoMergePeor);
+
+            ManejadorArchivos.escribirTiemposEnArchivo("src/main/java/datos/tiempos_algoritmos.txt", tam, tiempoBurbujaProm, tiempoBurbujaMejor, tiempoBurbujaPeor, tiempoQuickProm, tiempoQuickMejor, tiempoQuickPeor, tiempoInsertProm, tiempoInsertMejor, tiempoInsertPeor, tiempoMergeProm, tiempoMergeMejor, tiempoMergePeor);
         }
 
         System.out.println("Histograma de tiempos:");
