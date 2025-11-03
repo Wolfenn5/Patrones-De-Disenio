@@ -1,0 +1,87 @@
+@startuml
+' --- Participantes ---
+actor Usuario
+participant "TestOrdenamiento (main)" as Test
+participant ManejadorArchivos as Archivos
+participant ContextoOrdenamiento as Contexto
+participant EstrategiaOrdenamiento as Estrategia
+participant HistogramaTiempos as Histograma
+participant GraficaTiempos as Grafica
+
+' --- Flujo de Mensajes ---
+Usuario -> Test: Ejecutar aplicación
+activate Test
+
+Test -> Archivos: escribirEncabezado()
+activate Archivos
+deactivate Archivos
+
+loop Para cada tamaño de arreglo (tam = 2..1000)
+    Test -> Test: generarArreglo(tam, 0, 100)
+    Test -> Test: generarArregloInvertido(...)
+    
+    alt Para cada algoritmo (Burbuja, Quick, Insertion, Merge)
+        Test -> Contexto: setEstrategia(new [Algoritmo]())
+        
+        group Caso Promedio
+            Test -> Test: medirTiempo(contexto, copia_prom)
+            activate Test
+            Test -> Contexto: ejecutarEstrategia(copia_prom)
+            activate Contexto
+            Contexto -> Estrategia: ordenar(copia_prom)
+            activate Estrategia
+            deactivate Estrategia
+            deactivate Contexto
+            deactivate Test
+            Test -> Histograma: agregarTiempo("[Algoritmo] (Promedio)", tiempoProm)
+            activate Histograma
+            deactivate Histograma
+        end
+        
+        group Mejor Caso
+            Test -> Test: medirTiempo(contexto, copia_mejor)
+            activate Test
+            Test -> Contexto: ejecutarEstrategia(copia_mejor)
+            activate Contexto
+            Contexto -> Estrategia: ordenar(copia_mejor)
+            activate Estrategia
+            deactivate Estrategia
+            deactivate Contexto
+            deactivate Test
+            Test -> Histograma: agregarTiempo("[Algoritmo] (Mejor)", tiempoMejor)
+            activate Histograma
+            deactivate Histograma
+        end
+
+        group Peor Caso
+            Test -> Test: medirTiempo(contexto, copia_peor)
+            activate Test
+            Test -> Contexto: ejecutarEstrategia(copia_peor)
+            activate Contexto
+            Contexto -> Estrategia: ordenar(copia_peor)
+            activate Estrategia
+            deactivate Estrategia
+            deactivate Contexto
+            deactivate Test
+            Test -> Histograma: agregarTiempo("[Algoritmo] (Peor)", tiempoPeor)
+            activate Histograma
+            deactivate Histograma
+        end
+    end
+    
+    Test -> Archivos: escribirTiemposEnArchivo(...)
+    activate Archivos
+    deactivate Archivos
+end
+
+Test -> Histograma: getTiempos()
+activate Histograma
+deactivate Histograma
+
+Test -> Grafica: mostrarHistograma(tiempos, tamanios)
+activate Grafica
+' La gráfica se muestra al usuario
+deactivate Grafica
+
+deactivate Test
+@enduml
