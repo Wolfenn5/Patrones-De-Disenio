@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Empleado" as emp
+actor "Cliente" as cli
+
+rectangle "Diagrama de casos de uso Pizzas" {
+    
+    usecase "Configurar Pizza Base\n(Masa, Salsa, Queso)" as UC1
+    usecase "Agregar Ingredientes Extra\n(Carnes, Vegetales)" as UC2
+    usecase "Consultar Costo Total" as UC3
+    usecase "Confirmar Pedido" as UC4
+    usecase "Consultar estado de la pizza\n(Barra de Estado)" as UC5
+    usecase "Recibir Notificación\n(Pedido Listo)" as UC6
+
+    ' Relaciones del Empleado
+    emp -- UC1
+    emp -- UC2
+    emp -- UC4
+    emp -- UC5
+
+    ' Relaciones internas (Includes)
+    UC1 ..> UC3 : <<include>>
+    UC2 ..> UC3 : <<include>>
+    
+    ' El monitor incluye ver la notificación
+    UC5 ..> UC6 : <<include>>
+
+    ' El cliente solo recibe la notificación final
+    UC6 -- cli
+}
+@enduml

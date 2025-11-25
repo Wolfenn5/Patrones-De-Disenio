@@ -1,0 +1,63 @@
+@startuml
+hide circle
+hide methods
+hide empty members
+
+title Modelo del Dominio - Pizzería
+
+' Entidades del Negocio (Conceptos)
+
+class Cliente {
+    nombre
+    contacto
+}
+
+class Pedido {
+    numeroPedido
+    fecha
+    costoTotal
+}
+
+class Pizza {
+    nombre
+    tamaño
+}
+
+class Estado {
+    nombre
+}
+
+' Conceptos de Ingredientes
+class Masa
+class Salsa
+class Queso
+class Orilla
+
+class IngredienteOpcional {
+    nombre
+    precioExtra
+}
+
+class Carne
+class Vegetal
+class Condimento
+
+' Relaciones Conceptuales (Se leen como frases)
+
+Cliente "1" -- "*" Pedido : Realiza >
+
+Pedido "1" -- "1" Pizza : Contiene >
+Pedido "1" -- "1" Estado : Tiene >
+
+Pizza "1" -- "1" Masa : Hecha de >
+Pizza "1" -- "1" Salsa : Lleva >
+Pizza "1" -- "1" Queso : Lleva >
+Pizza "1" -- "1" Orilla : Tiene >
+
+Pizza "1" -- "*" IngredienteOpcional : Puede tener >
+
+IngredienteOpcional <|-- Carne
+IngredienteOpcional <|-- Vegetal
+IngredienteOpcional <|-- Condimento
+
+@enduml

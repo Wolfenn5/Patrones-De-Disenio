@@ -1,0 +1,80 @@
+@startuml
+
+' Clases Principales
+class PizzeriaManager {
+    - colaPedidos : List<Pedido>
+}
+
+class Pedido {
+    - id : int
+    - costoTotal : double
+    - fechaHora : DateTime
+}
+
+class Pizza {
+    - nombre : String
+    - tamaño : String
+}
+
+' Clases para Patrón State
+abstract class EstadoPedido {
+    - nombreEstado : String
+}
+class Recibido
+class Preparando
+class Horneando
+class Terminado
+class Entregado
+
+' Clases para Patrón Builder (Componentes Base)
+class Masa
+class Salsa
+class Queso
+class Orilla
+
+' Clases para Patrón Decorator
+abstract class Ingrediente {
+    - nombre : String
+    - precioAdicional : double
+}
+class Carne
+class Vegetal
+class Condimento
+
+' --- NUEVO: Clase para Patrón Observer ---
+class MonitorEstado {
+    - mensajeActual : String
+    + actualizar(estado : EstadoPedido)
+}
+
+' Relaciones
+PizzeriaManager "1" *-- "*" Pedido : Gestiona >
+
+Pedido "1" *-- "1" Pizza : Contiene >
+Pedido "1" o-- "1" EstadoPedido : Tiene estado actual >
+
+' Relación CRÍTICA para el Observer: El Pedido notifica al Monitor
+Pedido "1" ..> "1" MonitorEstado : Notifica cambios a >
+
+' Relación de herencia para Estados
+EstadoPedido <|-- Recibido
+EstadoPedido <|-- Preparando
+EstadoPedido <|-- Horneando
+EstadoPedido <|-- Terminado
+EstadoPedido <|-- Entregado
+
+' Composición de la Pizza (Builder implícito)
+Pizza "1" *-- "1" Masa
+Pizza "1" *-- "1" Salsa
+Pizza "1" *-- "1" Queso
+Pizza "1" *-- "1" Orilla
+
+' Agregación de ingredientes (Decorator implícito)
+Pizza "1" o-- "*" Ingrediente : Decorada con >
+
+' Herencia de Ingredientes
+Ingrediente <|-- Carne
+Ingrediente <|-- Vegetal
+Ingrediente <|-- Condimento
+
+@enduml
