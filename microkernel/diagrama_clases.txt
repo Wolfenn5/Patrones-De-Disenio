@@ -1,0 +1,76 @@
+@startuml
+
+package "cliente" {
+  class main {
+    + main(String[] args)
+  }
+}
+
+package "microkernel" {
+  class motor {
+    - gestorRecursos resources
+    - List<habilidadPlugin> habilidades
+    - render renderizador
+    + motor()
+    + iniciarSistema()
+    + registrarHabilidad(habilidadPlugin habilidad)
+    + setRenderizador(render render)
+    + procesarTurno(String enemigo)
+  }
+}
+
+package "pluginsSI" {
+  class gestorRecursos {
+    + cargarRecursos()
+  }
+}
+
+package "pluginsSE.poderElemental" {
+  class poderFuego {
+    + getNombre(): String
+    + ejecutar(String objetivo)
+  }
+  
+  class poderAgua {
+    + getNombre(): String
+    + ejecutar(String objetivo)
+  }
+}
+
+package "pluginsSE.movimientos" {
+  class dobleSalto {
+    + getNombre(): String
+    + ejecutar(String objetivo)
+  }
+}
+
+package "adaptadores" {
+  interface habilidadPlugin {
+    + getNombre(): String
+    + ejecutar(String objetivo)
+  }
+  
+  interface render {
+    + renderizar()
+  }
+}
+
+' Relaciones de herencia/interfaz
+habilidadPlugin <|.. poderFuego
+habilidadPlugin <|.. poderAgua
+habilidadPlugin <|.. dobleSalto
+render <|.. main
+
+' Relaciones de composición/agregación
+motor --> gestorRecursos
+motor o--> habilidadPlugin
+motor --> render
+
+' Relaciones de uso
+main --> motor
+main --> poderFuego
+main --> poderAgua
+main --> dobleSalto
+
+
+@enduml
