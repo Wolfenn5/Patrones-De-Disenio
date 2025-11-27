@@ -1,0 +1,9 @@
+pluginsSI/gestorRecursos.class
+cliente/main.class
+adaptadores/habilidadPlugin.class
+adaptadores/render.class
+pluginsSE/poderElemental/poderAgua.class
+microkernel/motor.class
+pluginsSE/poderElemental/poderFuego.class
+pluginsSE/movimientos/dobleSalto.class
+cliente/main$1.class
